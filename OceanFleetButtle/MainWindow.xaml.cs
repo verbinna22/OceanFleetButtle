@@ -24,25 +24,44 @@ namespace OceanFleetButtle
     {
         public MainWindow()
         {
-            var gridMy = new Grid();
-            gridMy.Background = Brushes.BlueViolet;
-            for (int i = 0; i < 10; i++)
-            {
-                var colDef1 = new ColumnDefinition();
-                gridMy.ColumnDefinitions.Add(colDef1);
-            }
-            for (int i = 0; i < 10; i++)
-            {
-                var colDef1 = new RowDefinition();
-                gridMy.RowDefinitions.Add(colDef1);
-            }
-            gridMy.Width = 500;
-            gridMy.Height = 500;
             
-            gridMy.ShowGridLines = true;
-
             InitializeComponent();
-            canvy.Children.Add(gridMy);
+            for (int i = 0; i <= 10; i++)
+            {
+                var line = new Line();
+                line.X1 = 25;
+                line.Y1 = 25 + i * 25;
+                line.X2 = 275;
+                line.Y2 = 25 + i * 25;
+                line.Stroke = new SolidColorBrush(Colors.Red);
+                canvy.Children.Add(line);
+
+                var line2 = new Line();
+                line2.X1 = 25 + i * 25;
+                line2.Y1 = 25;
+                line2.X2 = 25 + i * 25;
+                line2.Y2 = 275;
+                line2.Stroke = new SolidColorBrush(Colors.Red);
+                canvy.Children.Add(line2);
+
+                var line3 = new Line();
+                line3.X1 = 300;
+                line3.Y1 = 25 + i * 25;
+                line3.X2 = 550;
+                line3.Y2 = 25 + i * 25;
+                line3.Stroke = new SolidColorBrush(Colors.Red);
+                canvy.Children.Add(line3);
+
+                var line4 = new Line();
+                line4.X1 = 300 + i * 25;
+                line4.Y1 = 25;
+                line4.X2 = 300 + i * 25;
+                line4.Y2 = 275;
+                line4.Stroke = new SolidColorBrush(Colors.Red);
+                canvy.Children.Add(line4);
+
+            }
+            
         }
     }
 }
