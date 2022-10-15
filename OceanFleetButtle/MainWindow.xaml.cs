@@ -67,7 +67,7 @@ namespace OceanFleetButtle
             line.Y1 = 25 + i * 25;
             line.X2 = 275;
             line.Y2 = 25 + i * 25;
-            line.Stroke = new SolidColorBrush(Colors.Red);
+            line.Stroke = new SolidColorBrush(Colors.Blue);
             canvy.Children.Add(line);
 
         }
@@ -79,7 +79,7 @@ namespace OceanFleetButtle
             line2.Y1 = 25;
             line2.X2 = 25 + i * 25;
             line2.Y2 = 275;
-            line2.Stroke = new SolidColorBrush(Colors.Red);
+            line2.Stroke = new SolidColorBrush(Colors.Blue);
             canvy.Children.Add(line2);
         }
 
@@ -88,6 +88,7 @@ namespace OceanFleetButtle
             var microField = new Button();
             microField.Width = 25;
             microField.Height = 25;
+            microField.Background = new SolidColorBrush(Colors.Blue);
             microField.Click += new RoutedEventHandler(MyAttack);
             canvy.Children.Add(microField);
             Canvas.SetLeft(microField, 25 + x * 25);
@@ -294,7 +295,7 @@ namespace OceanFleetButtle
                             try
                             {
                                 if (shipArray[i + x + kx, j + y + ky] == 1)
-                                    throw new DivideByZeroException();
+                                    throw new PositionException("Uncorrect position");
                             }
                             catch (IndexOutOfRangeException)
                             {
@@ -339,7 +340,7 @@ namespace OceanFleetButtle
                     uncorrect.Fill = new SolidColorBrush(Colors.Green);
 
                 }
-                catch (DivideByZeroException)
+                catch (PositionException)
                 {
                     Canvas.SetTop(uncorrect, 325);
                     Canvas.SetLeft(uncorrect, 25);
