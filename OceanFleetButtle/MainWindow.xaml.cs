@@ -28,9 +28,8 @@ namespace OceanFleetButtle
     {
         public MainWindow()
         {
+            this.ResizeMode = ResizeMode.NoResize;
             InitializeComponent();
-            MessageBox.Show("Игра Морской бой","Вам необходимо разместить корабли" +
-                "(см. в левом нижнем углу). Щелчок по кораблю меняет ориентацию.");
             for (int i = 0; i <= 10; i++)
             {
                 MyAdding(i);
@@ -41,6 +40,9 @@ namespace OceanFleetButtle
                 }
             }
             StartPlaying();
+            MessageBox.Show("Вам необходимо разместить корабли" +
+                "(см. в левом нижнем углу). Щелчок по кораблю меняет ориентацию.",
+                "Игра Морской бой");
         }
 
         List<Rectangle> shipList = new List<Rectangle>();
@@ -51,10 +53,32 @@ namespace OceanFleetButtle
         bool playing = false;
         int allFields = 35;
         int myAllFields = 35;
+
+        public void Restruct(object sender, RoutedEventArgs e)
+        {
+            if (!playing)
+            {
+                allShips = 0;
+                foreach (var ship in shipList)
+                {
+                    ship.Fill = new SolidColorBrush(Colors.Red);
+                }
+                for (int i = 0; i < 10; i++) 
+                for (int j = 0; j < 10; j++) shipArray[i, j] = 0;
+            }
+        }
         public void ComputerAdding(int i)
         {
             ComputerAddingHorisontal(i);
             ComputerAddingVertical(i);
+            var RestructButton = new Button();
+            RestructButton.Content = "Перестроить";
+            RestructButton.Width = 100;
+            RestructButton.Height = 30;
+            canvy.Children.Add(RestructButton);
+            Canvas.SetRight(RestructButton, 5);
+            Canvas.SetBottom(RestructButton, 5);
+            RestructButton.Click += new RoutedEventHandler(Restruct);
         }
 
         public void ComputerAddingHorisontal(int i)

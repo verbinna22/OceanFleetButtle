@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:OceanFleetButtle"
         mc:Ignorable="d"
-        Title="Морской бой" Height="450" Width="800">
+        Title="Морской бой" Height="500" Width="800">
     <Canvas x:Name="canvy">
         
     </Canvas>
