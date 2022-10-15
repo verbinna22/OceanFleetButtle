@@ -31,7 +31,6 @@ namespace OceanFleetButtle
                 MyAdding(i);
                 ComputerAdding(i);
             }
-            
             StartPlaying();
 
         }
@@ -101,9 +100,9 @@ namespace OceanFleetButtle
         }
         public void StartPlaying()
         {
-            for (int i = 1; i <= 5; i++)
+            for (int i = 1; i <= 2; i++)//5
             {
-                for (int j = i; j <= 5; j++)
+                for (int j = i; j <= 2; j++)//5
                 {
                     CreatingRectangle(i);
                 }
@@ -168,19 +167,17 @@ namespace OceanFleetButtle
                 dragging = true;
                 Mouse.Capture(curShip);
             }
-            if (playing)
-            {
-                var position = Mouse.GetPosition(this);
-                Playing(position.X, position.Y);
-            }
         }
 
         public void EvMouseUp(object sender, RoutedEventArgs e)
         {
-            var curShip = (Rectangle)e.Source;
-            dragging = false;
-            Mouse.Capture(null);
-            CorrectingPosition(curShip);
+            if (dragging)
+            {
+                var curShip = (Rectangle)e.Source;
+                dragging = false;
+                Mouse.Capture(null);
+                CorrectingPosition(curShip);
+            }
         }
 
         public void EvMouseMove(object sender, RoutedEventArgs e)
@@ -196,15 +193,15 @@ namespace OceanFleetButtle
 
         public Tuple<int, int> IntCoordinates(double x, double y)
         {
-            int intX = Convert.ToInt32(x) / 25 - 12;
-            int intY = Convert.ToInt32(y) / 25 - 1;
+            int intX = (Convert.ToInt32(x) + 13)/ 25 - 12;
+            int intY = (Convert.ToInt32(y) + 13)/ 25 - 1;
             return Tuple.Create(intX, intY);
         }
 
         public Tuple<int, int> IntCoordinates2(double x, double y)
         {
-            int intX = Convert.ToInt32(x) / 25 - 1;
-            int intY = Convert.ToInt32(y) / 25 - 1;
+            int intX = (Convert.ToInt32(x) + 13) / 25 - 1;
+            int intY = (Convert.ToInt32(y) + 13) / 25 - 1;
             return Tuple.Create(intX, intY);
         }
         public void FillShipArray(Rectangle ship, int x, int y)
@@ -274,18 +271,14 @@ namespace OceanFleetButtle
                     allShips--;
                 }
             }
-            if (allShips == 15)
+            if (allShips == 3)//15)
             {
                 playing = true;
                 GenerateComputerField();
+                
             }
         }
 
-        private void WinKeyDown(object sender, KeyEventArgs e)
-        {
-            MessageBox.Show(e.Key.ToString());
-            if (e.Key == Key.E) MessageBox.Show("a");//this.Close();
-        }
         public void GenerateComputerField()
         {
             var rand = new Random();
@@ -300,15 +293,15 @@ namespace OceanFleetButtle
                     }
                     else if (composition == 1)
                     {
-                        shipComputerArray[10 - i, j] = shipArray[i, j];
+                        shipComputerArray[9 - i, j] = shipArray[i, j];
                     }
                     else if (composition == 2)
                     {
-                        shipComputerArray[i, 10 - j] = shipArray[i, j];
+                        shipComputerArray[i, 9 - j] = shipArray[i, j];
                     }
                     else
                     {
-                        shipComputerArray[10 - i, 10 - j] = shipArray[i, j];
+                        shipComputerArray[9 - i, 9 - j] = shipArray[i, j];
                     }
                 }
             }
