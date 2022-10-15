@@ -15,16 +15,20 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+class PositionException : Exception
+{
+    public PositionException(string pos) : base(pos)
+    {
+    }
+}
+
 namespace OceanFleetButtle
 {
-    /// <summary>
-    /// Логика взаимодействия для MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         public MainWindow()
         {
-            
+
             InitializeComponent();
             for (int i = 0; i <= 10; i++)
             {
@@ -188,6 +192,15 @@ namespace OceanFleetButtle
 
         public void FinishPlaying()
         {
+            if (allFields == 0)
+            {
+                MessageBox.Show("Мои поздравления! Вы победили!");
+            }
+            else
+            {
+                MessageBox.Show("К сожалению, Вы проиграли!");
+            }
+            window.Close();
 
         }
 
@@ -212,7 +225,7 @@ namespace OceanFleetButtle
             if (playing)
             {
                 var curField = (Button)e.Source;
-                
+
                 if (curField.Background.ToString() == "#FFDDDDDD")
                 {
                     var x = Canvas.GetLeft(curField);
@@ -225,7 +238,7 @@ namespace OceanFleetButtle
         {
             var curShip = (Rectangle)e.Source;
             if (curShip.Fill.ToString() == "#FFFF0000")
-            { 
+            {
                 dragging = true;
                 Mouse.Capture(curShip);
             }
@@ -255,8 +268,8 @@ namespace OceanFleetButtle
 
         public Tuple<int, int> IntCoordinates(double x, double y)
         {
-            int intX = (Convert.ToInt32(x) + 13)/ 25 - 12;
-            int intY = (Convert.ToInt32(y) + 13)/ 25 - 1;
+            int intX = (Convert.ToInt32(x) + 13) / 25 - 12;
+            int intY = (Convert.ToInt32(y) + 13) / 25 - 1;
             return Tuple.Create(intX, intY);
         }
 
@@ -274,7 +287,7 @@ namespace OceanFleetButtle
             {
                 for (int j = 0; j < height; j++)
                 {
-                    for (int kx = -1; kx<2; kx++)
+                    for (int kx = -1; kx < 2; kx++)
                     {
                         for (int ky = -1; ky < 2; ky++)
                         {
@@ -283,9 +296,9 @@ namespace OceanFleetButtle
                                 if (shipArray[i + x + kx, j + y + ky] == 1)
                                     throw new DivideByZeroException();
                             }
-                            catch(IndexOutOfRangeException)
+                            catch (IndexOutOfRangeException)
                             {
-                                
+
                             }
                         }
                     }
@@ -296,7 +309,7 @@ namespace OceanFleetButtle
                 for (int j = 0; j < height; j++)
                 {
                     shipArray[i + x, j + y] = 1;
-                    
+
                 }
             }
         }
@@ -309,12 +322,12 @@ namespace OceanFleetButtle
             var intY = intCoords.Item2;
             allShips++;
             if ((intX < 0) || (intY < 0) ||
-                (intX > 10 - Convert.ToInt64(uncorrect.Width)/25) || (intY > 10 - uncorrect.Height/ 25))
+                (intX > 10 - Convert.ToInt64(uncorrect.Width) / 25) || (intY > 10 - uncorrect.Height / 25))
             {
                 Canvas.SetTop(uncorrect, 325);
                 Canvas.SetLeft(uncorrect, 25);
                 allShips--;
-                
+
             }
             else
             {
@@ -324,7 +337,7 @@ namespace OceanFleetButtle
                 {
                     FillShipArray(uncorrect, intX, intY);
                     uncorrect.Fill = new SolidColorBrush(Colors.Green);
-                    
+
                 }
                 catch (DivideByZeroException)
                 {
@@ -333,12 +346,12 @@ namespace OceanFleetButtle
                     allShips--;
                 }
             }
-            if (allShips == 3)//15)
+            if (allShips == 15)
             {
                 playing = true;
                 GenerateComputerField();
 
-                
+
             }
         }
 
@@ -352,7 +365,7 @@ namespace OceanFleetButtle
                 {
                     if (composition == 0)
                     {
-                        shipComputerArray[i,j] = shipArray[i,j];
+                        shipComputerArray[i, j] = shipArray[i, j];
                     }
                     else if (composition == 1)
                     {
