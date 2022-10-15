@@ -30,6 +30,13 @@ namespace OceanFleetButtle
             {
                 MyAdding(i);
                 ComputerAdding(i);
+                for (int j = 0; j < 10; j++)
+                {
+                    if (i != 10)
+                    {
+                        ComputerAddingButton(i, j);
+                    }
+                }
             }
             StartPlaying();
 
@@ -42,6 +49,7 @@ namespace OceanFleetButtle
         int allShips = 0;
         bool playing = false;
         int allFields = 35;
+        int myAllFields = 35;
         public void ComputerAdding(int i)
         {
             ComputerAddingHorisontal(i);
@@ -69,6 +77,17 @@ namespace OceanFleetButtle
             line2.Y2 = 275;
             line2.Stroke = new SolidColorBrush(Colors.Red);
             canvy.Children.Add(line2);
+        }
+
+        public void ComputerAddingButton(int x, int y)
+        {
+            var microField = new Button();
+            microField.Width = 25;
+            microField.Height = 25;
+            microField.Click += new RoutedEventHandler(MyAttack);
+            canvy.Children.Add(microField);
+            Canvas.SetLeft(microField, 25 + x * 25);
+            Canvas.SetTop(microField, 25 + y * 25);
         }
 
         public void MyAdding(int i)
@@ -100,15 +119,15 @@ namespace OceanFleetButtle
         }
         public void StartPlaying()
         {
-            for (int i = 1; i <= 2; i++)//5
+            for (int i = 1; i <= 5; i++)
             {
-                for (int j = i; j <= 2; j++)//5
+                for (int j = i; j <= 5; j++)
                 {
                     CreatingRectangle(i);
                 }
             }
         }
-        public void Playing(double x, double y)
+        public void Playing(double x, double y, Button curField)
         {
             var IntCoords = IntCoordinates2(x, y);
             var IntX = IntCoords.Item1;
@@ -118,6 +137,7 @@ namespace OceanFleetButtle
                 if (shipComputerArray[IntX, IntY] == 1)
                 {
                     shipComputerArray[IntX, IntY] = 0;
+                    curField.Background = new SolidColorBrush(Colors.Yellow);
                     allFields--;
                     MessageBox.Show("Ранил!");
                     if (allFields == 0)
@@ -127,6 +147,7 @@ namespace OceanFleetButtle
                 }
                 else
                 {
+                    curField.Visibility = Visibility.Hidden;
                     MessageBox.Show("Мимо!");
                     ComputerStickBack();
                 }
@@ -135,7 +156,34 @@ namespace OceanFleetButtle
 
         public void ComputerStickBack()
         {
-
+            var rand = new Random();
+            var x = rand.Next(10);
+            var y = rand.Next(10);
+            if (shipArray[x, y] == 1)
+            {
+                shipArray[x, y] = 0;
+                var damage = new Rectangle();
+                damage.Width = 25;
+                damage.Height = 25;
+                damage.Fill = new SolidColorBrush(Colors.Yellow);
+                canvy.Children.Add(damage);
+                Canvas.SetLeft(damage, 300 + 25 * x);
+                Canvas.SetTop(damage, 25 + 25 * y);
+                MessageBox.Show("Противник попал");
+                myAllFields--;
+                if (myAllFields == 0)
+                {
+                    FinishPlaying();
+                }
+                else
+                {
+                    ComputerStickBack();
+                }
+            }
+            else
+            {
+                MessageBox.Show("Противник не попал");
+            }
         }
 
         public void FinishPlaying()
@@ -159,6 +207,20 @@ namespace OceanFleetButtle
 
         }
 
+        void MyAttack(object sender, RoutedEventArgs e)
+        {
+            if (playing)
+            {
+                var curField = (Button)e.Source;
+                
+                if (curField.Background.ToString() == "#FFDDDDDD")
+                {
+                    var x = Canvas.GetLeft(curField);
+                    var y = Canvas.GetTop(curField);
+                    Playing(x, y, curField);
+                }
+            }
+        }
         public void EvMouseDown(object sender, RoutedEventArgs e)
         {
             var curShip = (Rectangle)e.Source;
@@ -275,6 +337,7 @@ namespace OceanFleetButtle
             {
                 playing = true;
                 GenerateComputerField();
+
                 
             }
         }
