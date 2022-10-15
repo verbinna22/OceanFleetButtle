@@ -28,22 +28,19 @@ namespace OceanFleetButtle
     {
         public MainWindow()
         {
-
             InitializeComponent();
+            MessageBox.Show("Игра Морской бой","Вам необходимо разместить корабли" +
+                "(см. в левом нижнем углу). Щелчок по кораблю меняет ориентацию.");
             for (int i = 0; i <= 10; i++)
             {
                 MyAdding(i);
                 ComputerAdding(i);
                 for (int j = 0; j < 10; j++)
                 {
-                    if (i != 10)
-                    {
-                        ComputerAddingButton(i, j);
-                    }
+                    if (i != 10) ComputerAddingButton(i, j);
                 }
             }
             StartPlaying();
-
         }
 
         List<Rectangle> shipList = new List<Rectangle>();
@@ -139,23 +136,33 @@ namespace OceanFleetButtle
             var IntY = IntCoords.Item2;
             if ((IntX >= 0) && (IntY >= 0) && (IntY < 10) && (IntX < 10))
             {
-                if (shipComputerArray[IntX, IntY] == 1)
-                {
-                    shipComputerArray[IntX, IntY] = 0;
-                    curField.Background = new SolidColorBrush(Colors.Yellow);
-                    allFields--;
-                    MessageBox.Show("Ранил!");
-                    if (allFields == 0)
-                    {
-                        FinishPlaying();
-                    }
-                }
-                else
-                {
-                    curField.Visibility = Visibility.Hidden;
-                    MessageBox.Show("Мимо!");
-                    ComputerStickBack();
-                }
+                CorrectCoordinatesDo(curField, IntX, IntY);
+            }
+        }
+
+        private void CorrectCoordinatesDo(Button curField, int IntX, int IntY)
+        {
+            if (shipComputerArray[IntX, IntY] == 1)
+            {
+                DoIfDamage(curField, IntX, IntY);
+            }
+            else
+            {
+                curField.Visibility = Visibility.Hidden;
+                MessageBox.Show("Мимо!");
+                ComputerStickBack();
+            }
+        }
+
+        private void DoIfDamage(Button curField, int IntX, int IntY)
+        {
+            shipComputerArray[IntX, IntY] = 0;
+            curField.Background = new SolidColorBrush(Colors.Yellow);
+            allFields--;
+            MessageBox.Show("Ранил!");
+            if (allFields == 0)
+            {
+                FinishPlaying();
             }
         }
 
@@ -166,28 +173,33 @@ namespace OceanFleetButtle
             var y = rand.Next(10);
             if (shipArray[x, y] == 1)
             {
-                shipArray[x, y] = 0;
-                var damage = new Rectangle();
-                damage.Width = 25;
-                damage.Height = 25;
-                damage.Fill = new SolidColorBrush(Colors.Yellow);
-                canvy.Children.Add(damage);
-                Canvas.SetLeft(damage, 300 + 25 * x);
-                Canvas.SetTop(damage, 25 + 25 * y);
-                MessageBox.Show("Противник попал");
-                myAllFields--;
-                if (myAllFields == 0)
-                {
-                    FinishPlaying();
-                }
-                else
-                {
-                    ComputerStickBack();
-                }
+                DamagingMe(x, y);
             }
             else
             {
                 MessageBox.Show("Противник не попал");
+            }
+        }
+
+        private void DamagingMe(int x, int y)
+        {
+            shipArray[x, y] = 0;
+            var damage = new Rectangle();
+            damage.Width = 25;
+            damage.Height = 25;
+            damage.Fill = new SolidColorBrush(Colors.Yellow);
+            canvy.Children.Add(damage);
+            Canvas.SetLeft(damage, 300 + 25 * x);
+            Canvas.SetTop(damage, 25 + 25 * y);
+            MessageBox.Show("Противник попал");
+            myAllFields--;
+            if (myAllFields == 0)
+            {
+                FinishPlaying();
+            }
+            else
+            {
+                ComputerStickBack();
             }
         }
 
@@ -223,11 +235,12 @@ namespace OceanFleetButtle
 
         void MyAttack(object sender, RoutedEventArgs e)
         {
+            //MessageBox.Show(((Button)e.Source).Background.ToString());
             if (playing)
             {
                 var curField = (Button)e.Source;
 
-                if (curField.Background.ToString() == "#FFDDDDDD")
+                if (curField.Background.ToString() == "#FF0000FF")
                 {
                     var x = Canvas.GetLeft(curField);
                     var y = Canvas.GetTop(curField);
@@ -253,6 +266,19 @@ namespace OceanFleetButtle
                 dragging = false;
                 Mouse.Capture(null);
                 CorrectingPosition(curShip);
+            }
+        }
+
+        public void RotateShips()
+        {
+            foreach (var ship in shipList)
+            {
+                if (ship.Fill.ToString() == "#FFFF0000")
+                {
+                    var heigth = ship.Height;
+                    ship.Height = ship.Width;
+                    ship.Width = heigth;
+                }   
             }
         }
 
@@ -292,19 +318,16 @@ namespace OceanFleetButtle
                     {
                         for (int ky = -1; ky < 2; ky++)
                         {
-                            try
-                            {
-                                if (shipArray[i + x + kx, j + y + ky] == 1)
-                                    throw new PositionException("Uncorrect position");
-                            }
-                            catch (IndexOutOfRangeException)
-                            {
-
-                            }
+                            Filling(x, y, i, j, kx, ky);
                         }
                     }
                 }
             }
+            FillMyArray(x, y, width, height);
+        }
+
+        private void FillMyArray(int x, int y, int width, int height)
+        {
             for (int i = 0; i < width; i++)
             {
                 for (int j = 0; j < height; j++)
@@ -314,6 +337,19 @@ namespace OceanFleetButtle
                 }
             }
         }
+
+        private void Filling(int x, int y, int i, int j, int kx, int ky)
+        {
+            try
+            {
+                if (shipArray[i + x + kx, j + y + ky] == 1)
+                    throw new PositionException("Uncorrect position");
+            }
+            catch (IndexOutOfRangeException)
+            {
+            }
+        }
+
         public void CorrectingPosition(Rectangle uncorrect)
         {
             double x = Canvas.GetLeft(uncorrect);
@@ -322,38 +358,53 @@ namespace OceanFleetButtle
             var intX = intCoords.Item1;
             var intY = intCoords.Item2;
             allShips++;
-            if ((intX < 0) || (intY < 0) ||
-                (intX > 10 - Convert.ToInt64(uncorrect.Width) / 25) || (intY > 10 - uncorrect.Height / 25))
+            if (DoingCondicion(uncorrect, intX, intY))
             {
-                Canvas.SetTop(uncorrect, 325);
-                Canvas.SetLeft(uncorrect, 25);
-                allShips--;
-
+                DoIfErrorDragging(uncorrect);
             }
             else
             {
-                Canvas.SetLeft(uncorrect, intX * 25 + 300);
-                Canvas.SetTop(uncorrect, intY * 25 + 25);
-                try
-                {
-                    FillShipArray(uncorrect, intX, intY);
-                    uncorrect.Fill = new SolidColorBrush(Colors.Green);
-
-                }
-                catch (PositionException)
-                {
-                    Canvas.SetTop(uncorrect, 325);
-                    Canvas.SetLeft(uncorrect, 25);
-                    allShips--;
-                }
+                FillRectangle(uncorrect, intX, intY);
             }
             if (allShips == 15)
             {
                 playing = true;
                 GenerateComputerField();
+                MessageBox.Show("А теперь давайте поиграем!");
+            }
+        }
 
+        private void DoIfErrorDragging(Rectangle uncorrect)
+        {
+            Canvas.SetTop(uncorrect, 325);
+            Canvas.SetLeft(uncorrect, 25);
+            RotateShips();
+            allShips--;
+        }
+
+        private void FillRectangle(Rectangle uncorrect, int intX, int intY)
+        {
+            Canvas.SetLeft(uncorrect, intX * 25 + 300);
+            Canvas.SetTop(uncorrect, intY * 25 + 25);
+            try
+            {
+                FillShipArray(uncorrect, intX, intY);
+                uncorrect.Fill = new SolidColorBrush(Colors.Green);
 
             }
+            catch (PositionException)
+            {
+                Canvas.SetTop(uncorrect, 325);
+                Canvas.SetLeft(uncorrect, 25);
+                allShips--;
+            }
+        }
+
+        private static bool DoingCondicion(Rectangle uncorrect, int intX, int intY)
+        {
+            return (intX < 0) || (intY < 0) ||
+                            (intX > 10 - Convert.ToInt64(uncorrect.Width) / 25)
+                            || (intY > 10 - uncorrect.Height / 25);
         }
 
         public void GenerateComputerField()
@@ -364,23 +415,28 @@ namespace OceanFleetButtle
             {
                 for (int j = 0; j < 10; j++)
                 {
-                    if (composition == 0)
-                    {
-                        shipComputerArray[i, j] = shipArray[i, j];
-                    }
-                    else if (composition == 1)
-                    {
-                        shipComputerArray[9 - i, j] = shipArray[i, j];
-                    }
-                    else if (composition == 2)
-                    {
-                        shipComputerArray[i, 9 - j] = shipArray[i, j];
-                    }
-                    else
-                    {
-                        shipComputerArray[9 - i, 9 - j] = shipArray[i, j];
-                    }
+                    AutoGenerating(composition, i, j);
                 }
+            }
+        }
+
+        private void AutoGenerating(int composition, int i, int j)
+        {
+            if (composition == 0)
+            {
+                shipComputerArray[i, j] = shipArray[i, j];
+            }
+            else if (composition == 1)
+            {
+                shipComputerArray[9 - i, j] = shipArray[i, j];
+            }
+            else if (composition == 2)
+            {
+                shipComputerArray[i, 9 - j] = shipArray[i, j];
+            }
+            else
+            {
+                shipComputerArray[9 - i, 9 - j] = shipArray[i, j];
             }
         }
     }
