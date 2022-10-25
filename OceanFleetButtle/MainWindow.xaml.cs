@@ -48,7 +48,8 @@ namespace OceanFleetButtle
         bool playing = false;
         int allFields = 35;
         int myAllFields = 35;
-        int position = 0;
+        
+        
         public void Restruct(object sender, RoutedEventArgs e)
         {
             if (playing)
@@ -61,7 +62,6 @@ namespace OceanFleetButtle
             {
                 ship.Fill = new SolidColorBrush(Colors.Red);
             }
-
             for (int i = 0; i < 10; i++)
                 for (int j = 0; j < 10; j++)
                     shipArray[i, j] = 0;
@@ -71,7 +71,6 @@ namespace OceanFleetButtle
             ComputerAddingHorisontal(i, true);
             ComputerAddingHorisontal(i, false);
             Button RestructButton = new Button();
-            position = canvy.Children.Count;
             canvy.Children.Add(RestructButton);
             RestructButton.Content = "Перестроить";
             RestructButton.Width = 100;
@@ -282,7 +281,7 @@ namespace OceanFleetButtle
             damage.Width = 25;
             damage.Height = 25;
             if (color) damage.Fill = new SolidColorBrush(Colors.Yellow);
-            else damage.Fill = new SolidColorBrush(Colors.AliceBlue);
+            else damage.Fill = new SolidColorBrush(Colors.BlueViolet);
             canvy.Children.Add(damage);
             Canvas.SetLeft(damage, 300 + 25 * x);
             Canvas.SetTop(damage, 25 + 25 * y);
@@ -459,7 +458,6 @@ namespace OceanFleetButtle
                 playing = true;
                 GenerateComputerField();
                 MessageBox.Show("А теперь давайте поиграем!");
-                //canvy.Children[position].Visibility = Visibility.Hidden;
                 AttackGeneration();
             }
         }
